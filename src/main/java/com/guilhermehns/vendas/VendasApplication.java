@@ -15,7 +15,7 @@ public class VendasApplication {
 	@Qualifier("applicationName")
 	private String applicationName;
 
-	@GetMapping("/hello")
+	@GetMapping(value = "/hello")
 	public String helloWorld(){
 		return applicationName;
 	}
