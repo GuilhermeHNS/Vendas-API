@@ -2,10 +2,13 @@ package com.guilhermehns.vendas.rest.controller;
 
 import com.guilhermehns.vendas.domain.entity.ItemPedido;
 import com.guilhermehns.vendas.domain.entity.Pedido;
+import com.guilhermehns.vendas.domain.enums.StatusPedido;
+import com.guilhermehns.vendas.rest.dto.AtualizacaoStatusPedidoDTO;
 import com.guilhermehns.vendas.rest.dto.InformacaoItemPedidoDTO;
 import com.guilhermehns.vendas.rest.dto.InformacoesPedidoDTO;
 import com.guilhermehns.vendas.rest.dto.PedidoDTO;
 import com.guilhermehns.vendas.service.PedidoService;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @RestController
 @RequestMapping("api/pedidos")
@@ -40,6 +44,12 @@ public class PedidoController {
                 .obterPedidoCompleto(id)
                 .map( p -> converter(p))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido não encontrado."));
+    }
+
+    @PatchMapping("{id}")
+    @ResponseStatus(NO_CONTENT)
+    public void updateStatus(@PathVariable Integer id, @RequestBody AtualizacaoStatusPedidoDTO dto){
+        service.atualizaStatus(id, StatusPedido.valueOf(dto.getNovoStatus()));
     }
 
     private InformacoesPedidoDTO converter(Pedido pedido) {
@@ -68,6 +78,8 @@ public class PedidoController {
                 .build()
         ).collect(Collectors.toList());
     }
+
+
 
 
 }

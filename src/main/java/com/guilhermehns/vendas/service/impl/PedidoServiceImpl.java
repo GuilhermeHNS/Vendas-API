@@ -9,6 +9,7 @@ import com.guilhermehns.vendas.domain.repository.Clientes;
 import com.guilhermehns.vendas.domain.repository.ItensPedido;
 import com.guilhermehns.vendas.domain.repository.Pedidos;
 import com.guilhermehns.vendas.domain.repository.Produtos;
+import com.guilhermehns.vendas.exception.PedidoNaoEncontradoException;
 import com.guilhermehns.vendas.exception.RegraNegocioException;
 import com.guilhermehns.vendas.rest.dto.ItemPedidoDTO;
 import com.guilhermehns.vendas.rest.dto.PedidoDTO;
@@ -73,6 +74,18 @@ public class PedidoServiceImpl implements PedidoService {
     @Override
     public Optional<Pedido> obterPedidoCompleto(Integer id) {
         return repository.findByIdFetchItens(id);
+    }
+
+    @Override
+    @Transactional
+    public void atualizaStatus(Integer id, StatusPedido statusPedido) {
+        repository
+                .findById(id)
+                .map( p ->{
+                    p.setStatus(statusPedido);
+                    return repository.save(p);
+                })
+                .orElseThrow(() -> new PedidoNaoEncontradoException());
     }
 
 }
