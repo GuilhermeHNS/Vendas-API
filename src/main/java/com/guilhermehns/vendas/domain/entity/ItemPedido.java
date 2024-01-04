@@ -10,7 +10,7 @@ public class ItemPedido {
     @Column(name = "id")
     private Integer id;
     @ManyToOne
-    @JoinColumn(name = "pedido_id")
+    @JoinColumn(name = "produto_id")
     private Produto produto;
     @ManyToOne
     @JoinColumn(name = "pedido_id")
