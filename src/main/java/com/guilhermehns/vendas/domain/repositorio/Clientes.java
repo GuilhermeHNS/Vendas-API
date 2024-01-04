@@ -1,10 +1,14 @@
 package com.guilhermehns.vendas.domain.repositorio;
 
 import com.guilhermehns.vendas.domain.entity.Cliente;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,23 +16,25 @@ import java.util.List;
 
 @Repository
 public class Clientes {
-
-    private static String INSERT = "insert into cliente (nome) values (?)";
-    private static String SELECT_ALL = "select * from cliente";
-    private static String UPDATE = "update cliente set nome = ? where id = ?";
-    private static String DELETE = "delete from cliente where id = ?";
+    private static String SELECT_ALL = "SELECT * FROM CLIENTE ";
+    private static String UPDATE = "update cliente set nome = ? where id = ? ";
+    private static String DELETE = "delete from cliente where id = ? ";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Transactional
     public Cliente salvar(Cliente cliente){
-        jdbcTemplate.update( INSERT, new Object[]{cliente.getNome()});
+        entityManager.persist(cliente);
         return cliente;
     }
 
     public Cliente atualizar(Cliente cliente){
         jdbcTemplate.update(UPDATE, new Object[]{
-                cliente.getNome(), cliente.getId()});
+                cliente.getNome(), cliente.getId()} );
         return cliente;
     }
 
@@ -44,22 +50,21 @@ public class Clientes {
         return jdbcTemplate.query(
                 SELECT_ALL.concat(" where nome like ? "),
                 new Object[]{"%" + nome + "%"},
-                getClienteRowMapper());
+                obterClienteMapper());
     }
 
     public List<Cliente> obterTodos(){
-        return jdbcTemplate.query(SELECT_ALL, getClienteRowMapper());
+        return jdbcTemplate.query(SELECT_ALL, obterClienteMapper());
     }
 
-    private static RowMapper<Cliente> getClienteRowMapper() {
+    private RowMapper<Cliente> obterClienteMapper() {
         return new RowMapper<Cliente>() {
             @Override
-            public Cliente mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Integer id = rs.getInt("id");
-                String nome = rs.getString("nome");
+            public Cliente mapRow(ResultSet resultSet, int i) throws SQLException {
+                Integer id = resultSet.getInt("id");
+                String nome = resultSet.getString("nome");
                 return new Cliente(id, nome);
             }
         };
     }
-
 }
