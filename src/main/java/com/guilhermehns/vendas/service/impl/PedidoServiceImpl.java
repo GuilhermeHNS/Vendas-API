@@ -4,6 +4,7 @@ import com.guilhermehns.vendas.domain.entity.Cliente;
 import com.guilhermehns.vendas.domain.entity.ItemPedido;
 import com.guilhermehns.vendas.domain.entity.Pedido;
 import com.guilhermehns.vendas.domain.entity.Produto;
+import com.guilhermehns.vendas.domain.enums.StatusPedido;
 import com.guilhermehns.vendas.domain.repository.Clientes;
 import com.guilhermehns.vendas.domain.repository.ItensPedido;
 import com.guilhermehns.vendas.domain.repository.Pedidos;
@@ -42,6 +43,7 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setTotal(dto.getTotal());
         pedido.setDataPedido(LocalDate.now());
         pedido.setCliente(cliente);
+        pedido.setStatus(StatusPedido.REALIZADO);
 
         List<ItemPedido> itensPedido = converterItens(pedido, dto.getItens());
         repository.save(pedido);
