@@ -1,11 +1,28 @@
 package com.guilhermehns.vendas.domain.entity;
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
+
+@Entity
+@Table(name = "pedido")
 public class Pedido {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "cliente_id")
     private Cliente cliente;
-    private LocalDate data;
+    @Column(name = "data_pedido")
+    private LocalDate dataPedido;
+    @Column(name = "total", length = 20, precision = 2)
     private BigDecimal total;
+
+    @OneToMany(mappedBy = "pedido")
+    private List<ItemPedido> itens;
 
     public Integer getId() {
         return id;
@@ -23,12 +40,12 @@ public class Pedido {
         this.cliente = cliente;
     }
 
-    public LocalDate getData() {
-        return data;
+    public LocalDate getDataPedido() {
+        return dataPedido;
     }
 
-    public void setData(LocalDate data) {
-        this.data = data;
+    public void setDataPedido(LocalDate dataPedido) {
+        this.dataPedido = dataPedido;
     }
 
     public BigDecimal getTotal() {
@@ -37,5 +54,13 @@ public class Pedido {
 
     public void setTotal(BigDecimal total) {
         this.total = total;
+    }
+
+    public List<ItemPedido> getItens() {
+        return itens;
+    }
+
+    public void setItens(List<ItemPedido> itens) {
+        this.itens = itens;
     }
 }
