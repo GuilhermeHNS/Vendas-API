@@ -8,6 +8,7 @@ import com.guilhermehns.vendas.rest.dto.InformacaoItemPedidoDTO;
 import com.guilhermehns.vendas.rest.dto.InformacoesPedidoDTO;
 import com.guilhermehns.vendas.rest.dto.PedidoDTO;
 import com.guilhermehns.vendas.service.PedidoService;
+import jakarta.validation.Valid;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
@@ -33,7 +34,7 @@ public class PedidoController {
 
     @PostMapping
     @ResponseStatus(CREATED)
-    public Integer save(@RequestBody PedidoDTO dto){
+    public Integer save(@RequestBody @Valid PedidoDTO dto){
         Pedido pedido = service.salvar(dto);
         return pedido.getId();
     }
@@ -48,7 +49,7 @@ public class PedidoController {
 
     @PatchMapping("{id}")
     @ResponseStatus(NO_CONTENT)
-    public void updateStatus(@PathVariable Integer id, @RequestBody AtualizacaoStatusPedidoDTO dto){
+    public void updateStatus(@PathVariable Integer id, @RequestBody @Valid AtualizacaoStatusPedidoDTO dto){
         service.atualizaStatus(id, StatusPedido.valueOf(dto.getNovoStatus()));
     }
 

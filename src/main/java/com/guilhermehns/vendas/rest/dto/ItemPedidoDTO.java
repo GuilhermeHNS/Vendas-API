@@ -1,5 +1,6 @@
 package com.guilhermehns.vendas.rest.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,4 @@ import lombok.NoArgsConstructor;
 public class ItemPedidoDTO {
     private Integer produto;
     private Integer quantidade;
-
-
 }

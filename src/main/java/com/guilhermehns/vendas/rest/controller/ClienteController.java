@@ -2,6 +2,7 @@ package com.guilhermehns.vendas.rest.controller;
 
 import com.guilhermehns.vendas.domain.entity.Cliente;
 import com.guilhermehns.vendas.domain.repository.Clientes;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -34,7 +35,7 @@ public class ClienteController {
 
     @PostMapping
     @ResponseStatus(CREATED)
-    public Cliente save( @RequestBody Cliente cliente ){
+    public Cliente save( @RequestBody @Valid Cliente cliente ){
         return clientes.save(cliente);
     }
 
@@ -53,7 +54,7 @@ public class ClienteController {
     @PutMapping("{id}")
     @ResponseStatus(NO_CONTENT)
     public void update( @PathVariable Integer id,
-                                  @RequestBody Cliente cliente ){
+                                  @RequestBody @Valid Cliente cliente ){
         clientes
                 .findById(id)
                 .map( clienteExistente -> {
