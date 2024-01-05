@@ -11,12 +11,35 @@
 	<groupId>com.guilhermehns</groupId>
 	<artifactId>vendas</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>${project.packaging}</packaging>
 	<name>vendas</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
+
+	<profiles>
+		<profile>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<id>desenvolvimento</id>
+			<properties>
+				<project.packaging>jar</project.packaging>
+				<tomcat.scope>compile</tomcat.scope>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>producao</id>
+			<properties>
+				<project.packaging>war</project.packaging>
+				<tomcat.scope>provided</tomcat.scope>
+			</properties>
+		</profile>
+
+	</profiles>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -31,7 +54,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>provided</scope>
+			<scope>${tomcat.scope}</scope>
 		</dependency>
 
 
