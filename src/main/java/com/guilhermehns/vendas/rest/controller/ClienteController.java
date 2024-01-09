@@ -6,6 +6,9 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -35,8 +38,18 @@ public class ClienteController {
 
     @PostMapping
     @ResponseStatus(CREATED)
-    public Cliente save( @RequestBody @Valid Cliente cliente ){
+    public Cliente save(@RequestBody @Valid Cliente cliente){
         return clientes.save(cliente);
+    }
+
+    @GetMapping("/private")
+    public ResponseEntity<String> privateRoute(Authentication authentication){
+        return  ResponseEntity.ok("Private route ok! " + authentication.getName());
+    }
+    @GetMapping("/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> adminRoute(){
+        return  ResponseEntity.ok("Admin route ok! ");
     }
 
     @DeleteMapping("{id}")
