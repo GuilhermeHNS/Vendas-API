@@ -9,6 +9,9 @@ import com.guilhermehns.vendas.domain.repository.UsuarioRepository;
 import com.guilhermehns.vendas.rest.dto.CadastroUsuarioDTO;
 import com.guilhermehns.vendas.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,5 +52,20 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioGrupoRepository.saveAll(listaUsuarioGrupo);
 
         return usuario;
+    }
+
+    public UserDetails loadUserByUserName(String username) throws UsernameNotFoundException{
+        Usuario usuario = usuarioRepository.findByLogin(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não econtrado na base de dados"));
+
+        String[] roles = usuario.isAdmin() ?
+                new String[]{"ADMIN", "USER"} : new String[]{"USER"};
+
+        return User
+                .builder()
+                .username(usuario.getLogin())
+                .password(usuario.getSenha())
+                .roles(roles)
+                .build();
     }
 }
