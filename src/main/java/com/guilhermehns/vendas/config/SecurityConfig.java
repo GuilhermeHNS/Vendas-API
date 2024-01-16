@@ -1,7 +1,12 @@
 package com.guilhermehns.vendas.config;
 
+import com.guilhermehns.vendas.security.jwt.JwtAuthFilter;
+import com.guilhermehns.vendas.security.jwt.JwtService;
+import com.guilhermehns.vendas.service.impl.UsuarioServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,11 +21,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
+
+    @Autowired
+    private UsuarioServiceImpl usuarioService;
+    @Autowired
+    private JwtService jwtService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -29,13 +40,20 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(customizer -> {
-                    customizer.requestMatchers("/public").permitAll();
+                    customizer.requestMatchers("/api/clientes/**").hasAnyRole("USER", "ADMIN");
+                    customizer.requestMatchers("/api/pedidos/**").hasAnyRole("USER", "ADMIN");
+                    customizer.requestMatchers("/api/produtos/**").hasRole("ADMIN");
+                    customizer.requestMatchers(HttpMethod.POST, "/api/usuarios/**").permitAll();
                     customizer.anyRequest().authenticated();
                 })
-                .httpBasic(Customizer.withDefaults())
                 .authenticationProvider(authentication)
-                .addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    @Bean
+    public OncePerRequestFilter jwtFilter(){
+        return new JwtAuthFilter(jwtService, usuarioService);
     }
 
     @Bean
