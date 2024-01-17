@@ -6,6 +6,7 @@ import com.guilhermehns.vendas.domain.entity.UsuarioGrupo;
 import com.guilhermehns.vendas.domain.repository.GrupoRepository;
 import com.guilhermehns.vendas.domain.repository.UsuarioGrupoRepository;
 import com.guilhermehns.vendas.domain.repository.UsuarioRepository;
+import com.guilhermehns.vendas.exception.SenhaInvalidaException;
 import com.guilhermehns.vendas.rest.dto.CadastroUsuarioDTO;
 import com.guilhermehns.vendas.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,15 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuario;
     }
 
+    public UserDetails autenticar(Usuario usuario){
+        UserDetails user = loadUserByUserName(usuario.getLogin());
+        if (passwordEncoder.matches(usuario.getSenha(), user.getPassword())) {
+            return user;
+        }
+        throw new SenhaInvalidaException();
+    }
+
+    @Override
     public UserDetails loadUserByUserName(String username) throws UsernameNotFoundException{
         Usuario usuario = usuarioRepository.findByLogin(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não econtrado na base de dados"));
