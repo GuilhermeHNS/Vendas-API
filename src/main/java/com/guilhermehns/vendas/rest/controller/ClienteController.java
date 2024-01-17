@@ -42,16 +42,6 @@ public class ClienteController {
         return clientes.save(cliente);
     }
 
-    @GetMapping("/private")
-    public ResponseEntity<String> privateRoute(Authentication authentication){
-        return  ResponseEntity.ok("Private route ok! " + authentication.getName());
-    }
-    @GetMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> adminRoute(){
-        return  ResponseEntity.ok("Admin route ok! ");
-    }
-
     @DeleteMapping("{id}")
     @ResponseStatus(NO_CONTENT)
     public void delete(@PathVariable Integer id){

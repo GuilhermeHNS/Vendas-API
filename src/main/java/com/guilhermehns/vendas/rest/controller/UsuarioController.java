@@ -30,6 +30,7 @@ public class UsuarioController {
 
 
     @PostMapping("/auth")
+    @ResponseStatus(HttpStatus.OK)
     public TokenDTO autenticar(@RequestBody CredenciaisDTO credenciaisDTO){
         try{
             Usuario usuario = Usuario
